@@ -1,0 +1,67 @@
+DROP DATABASE Auction;
+CREATE DATABASE Auction COLLATE latin7_general_ci;
+USE Auction;
+
+CREATE TABLE Member  
+(
+    member_id INT(10) AUTO_INCREMENT NOT NULL, 
+    email VARCHAR(50) NOT NULL,
+    pass VARCHAR(50) NOT NULL,
+    fname VARCHAR(50) NOT NULL,
+    lname VARCHAR(50) NOT NULL, 
+    home_address VARCHAR(255) DEFAULT NULL,
+    shipping_address VARCHAR(255) NOT NULL, 
+    phone VARCHAR(20) DEFAULT NULL,
+    bank INT(12) NOT NULL,
+    rtn INT(9) NOT NULL,
+    
+    PRIMARY KEY(member_id)
+);
+
+CREATE TABLE Category  
+(
+    category_id INT(10) AUTO_INCREMENT NOT NULL, 
+    category_name VARCHAR(50) NOT NULL,
+    parent_category INT(10) DEFAULT NULL,
+    
+    PRIMARY KEY(category_id),
+    FOREIGN KEY(parent_category) REFERENCES Category(category_id)
+);
+
+CREATE TABLE Item  
+(
+    item_id INT(10) AUTO_INCREMENT NOT NULL,
+    item_name VARCHAR(50) NOT NULL,
+    description VARCHAR(255) DEFAULT NULL,
+    sold_to_id INT(10) DEFAULT NULL,
+    buyer_rating INT(1) DEFAULT NULL,
+    seller_rating INT(1) DEFAULT NULL,
+    buyer_comment VARCHAR(255) DEFAULT NULL,
+    seller_comment VARCHAR(255) DEFAULT NULL,
+    placed_by_id INT(10) NOT NULL,
+    starting_bid_price FLOAT NOT NULL,
+    current_bid_price FLOAT NOT NULL,
+    auction_start_date DATETIME NOT NULL,
+    auction_end_date DATETIME NOT NULL,
+    category_id INT(10) NOT NULL,
+
+    PRIMARY KEY(item_id),
+    
+    FOREIGN KEY(sold_to_id) REFERENCES Member(member_id),
+    FOREIGN KEY(placed_by_id) REFERENCES Member(member_id),
+    FOREIGN KEY(category_id) REFERENCES Category(category_id)
+	
+);
+
+CREATE TABLE Bid  
+(
+    member_id INT(10) NOT NULL, 
+    item_id INT(10) NOT NULL,
+    bid_time DATETIME NOT NULL,
+    bidding_increment FLOAT NOT NULL,
+    
+    PRIMARY KEY(member_id,item_id,bid_time),
+    
+    FOREIGN KEY(member_id) REFERENCES Member(member_id),
+    FOREIGN KEY(item_id) REFERENCES Item(item_id)
+);
